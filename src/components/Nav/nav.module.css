@@ -1,0 +1,35 @@
+.nav-container {
+  /* display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6rem;
+  min-height: 100vh; */
+
+  /* display: flex; */
+  background-color: #5d1c1c;
+  color: #efefef;
+  position: fixed;
+  top: 0;
+  height: 2.5em;
+  width: 100%;
+  padding: .6em .5em .5em;
+}
+
+.nav-container ol {
+  display: flex;
+  flex-direction: row;
+  list-style-type: none;
+  padding-left: 0;
+  width: 100%;
+}
+
+.nav-container li {
+  padding: 0 1%;
+  font-weight: 500;
+}
+
+.nav-container li:hover {
+  color: #d6d4d4;
+  font-size: ;
+}

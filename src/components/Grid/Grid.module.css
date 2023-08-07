@@ -1,0 +1,19 @@
+.grid-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.grid-container ol {
+  list-style: none;
+  display: flex;
+  flex-direction: row;
+}
+
+.cell {
+  height: 3em;
+  width: 3em;
+  border: 1px solid #ccc;
+  background-color: #8d8383;
+}
