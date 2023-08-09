@@ -78,11 +78,52 @@ export default class Grid {
   }
 
   moveShape (direction: Direction) {
+    /**
+     * @description - iterate through a shape's coordinates and find/return the length of the
+     * longest  row
+     * @returns [Int] - 1 based number representing the length of the shape's widest row.
+     */
+    function getShapeLength (shape: ShapeType) {
+      const shapeRows = shape.coordinates.map((r) => r.length)
+      return Math.max(...(shapeRows))
+    }
+
+    /**
+     * @description - determine if the move would be in grid bounds
+     * @returns [Boolean] - whether or not the move would be within grid bounds
+     */
+    const isWithinBounds = ({
+      shapeWidth,
+      gridWidth,
+      moveToCoordinates
+    }: {
+      shapeWidth: number,
+      gridWidth: number,
+      moveToCoordinates: coorTuple
+    }): boolean => {
+      // console.log('[ GridClass ] isWithinBoudns() shapeWidth => ', width)
+      // console.log('[ GridClass ] isWithinBoudns() currentCoordinates => ', currentCoordinates)
+      // console.log('[ GridClass ] isWithinBoudns() moveToCoordinates => ', moveToCoordinates)
+      
+      // const gridWidth = this.grid[0].length
+      // console.log('[ GridClass ] isWithinBoudns() this.grid.length => ', JSON.stringify(gridWidth ,null,4))
+
+      // OB LEFT
+      if (moveToCoordinates.y < 0) {
+        return false
+      }
+
+      // OB RIGHT
+      if (moveToCoordinates.y + shapeWidth > gridWidth) {
+        return false
+      }
+
+      return true
+    }
+    
     // console.log('[Grid class] moveShape() direction => ', direction)
     // console.log('[Grid class] moveShape() this.currentShape => ', this.currentShape)
     // console.log('[Grid class] moveShape() this.currentCoordinate => ', this.currentCoordinates)
-
-    this.clearShape()
 
     let newCoors: coorTuple;
 
@@ -91,9 +132,23 @@ export default class Grid {
     } else {
       newCoors = { x: this.currentCoordinates.x, y: this.currentCoordinates.y + 1 }
     }
-    
-    this.renderShape(newCoors)
 
+    const shapeWidth = getShapeLength(this.currentShape)
+    // console.log('[ GridClass ] moveShape() width => ', width)
+
+    const gridWidth = this.grid[0].length
+
+    const isMoveWithinBounds = isWithinBounds({
+      shapeWidth,
+      gridWidth,
+      moveToCoordinates: newCoors 
+    })
+
+    // OB right
+    if (isMoveWithinBounds) {
+      this.clearShape()
+      this.renderShape(newCoors)
+    }
   }
 
   renderGrid () {
@@ -113,7 +168,7 @@ export default class Grid {
   }
 
   private renderShape(coordinates: coorTuple) {
-    console.log('[ GridClass ] renderShape() coordinates => ', coordinates)
+    // console.log('[ GridClass ] renderShape() coordinates => ', coordinates)
 
     const { x, y } = coordinates
     this.currentCoordinates = { x, y }

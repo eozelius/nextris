@@ -18,8 +18,6 @@ export default function GridComponent () {
   )
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    console.log('e.code => ', e.code)
-
     if (['ArrowLeft', 'KeyA'].includes(e.code)) {
       gridInstance?.moveShape(Direction.LEFT)
     } else if (['ArrowRight', 'KeyD'].includes(e.code)) {
