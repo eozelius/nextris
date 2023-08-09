@@ -4,24 +4,14 @@ import Image from 'next/image'
 import classNames from 'classnames/bind'
 import { useState, useEffect } from 'react'
 
-import LShape from '@/models/Shape/L'
-import LineShape from '@/models/Shape/Line'
-import LeftZ from '@/models/Shape/LeftZ'
-import RightZ from '@/models/Shape/RightZ'
-import Shape, { coorTuple, Color } from '@/models/Shape'
+import Grid from '@/models/Grid'
 import blue from '@/images/sprites/blue.png'
 import red from '@/images/sprites/red.png'
 import green from '@/images/sprites/green.png'
 import purple from '@/images/sprites/purple.png'
 import pink from '@/images/sprites/pink.png'
 import styles from './Grid.module.css'
-
-// const lShape = new LShape()
-
-enum Direction {
-  LEFT = 'LEFT',
-  RIGHT = 'RIGHT',
-}
+import { Color, ShapeType } from '@/models/Shape/types'
 
 const colorToRender = (color: Color) => {
   let src;
@@ -56,88 +46,26 @@ const colorToRender = (color: Color) => {
   )
 }
 
-// clena up
-document.addEventListener('keydown', (e: KeyboardEvent) => {
-  if (['ArrowLeft', 'KeyA'].includes(e.code)) {
-    moveShape(Direction.LEFT)
-  } else if (['ArrowRight', 'KeyD'].includes(e.code)) {
-    moveShape(Direction.RIGHT)
-  }
-})
-
-const moveShape = (direction: Direction) => {
-  console.log('direction => ', direction)
-}
-
-// return a random shape
-const getRandomShape = () => {
-  const numberToShapeMap: { [key: number]: typeof LShape | typeof LineShape } = {
-    0: LShape,
-    1: LineShape,
-    2: LeftZ,
-    3: RightZ
-  }
-
-  const n = Math.floor(Math.random() * 1)
-  const randomShape = numberToShapeMap[n]
-  const instantiatedRandomShape = new randomShape()
-  return instantiatedRandomShape
-}
-
-export default function Grid () {
-  const [ currentShape, setCurrentShape ] = useState<Shape>(getRandomShape());
+export default function GridComponent () {
+  // clean up
+  // document.addEventListener('keydown', (e: KeyboardEvent) => {
+  //   if (['ArrowLeft', 'KeyA'].includes(e.code)) {
+  //     grid.moveShape(Direction.LEFT)
+  //   } else if (['ArrowRight', 'KeyD'].includes(e.code)) {
+  //     grid.moveShape(Direction.RIGHT)
+  //   }
+  // })
   
-  const [ grid, setGrid ] = useState<Array<Array<number | null>>>([
-    [null, null, null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null, null, null]
-  ])
+  const [ grid, setGrid ] = useState<Grid | null>(null)
 
+  // wrap in a one-time useEffect to prevent multiple instantiations of Grid.
+  // Might be about to move this to another util/Singleton etc...
   useEffect(() => {
-    // clone state.grid
-    const gridClone = JSON.parse(JSON.stringify(grid));
-
-    // todo: add type tuple to represent x,y coor
-    const startingPt: coorTuple = { x: 0, y: 4}
-    const { x, y } = startingPt;
-
-    // loop thru shape coordinates
-    for (let i = 0; i < currentShape.coordinates.length; i++){
-      const row = currentShape.coordinates[i]
-      for (let j = 0; j < row.length; j++) {
-        // console.log('[x, y] => ', `[${JSON.stringify(x)}, ${JSON.stringify(y)}]`)
-        // console.log('[i, j] => ', `[${JSON.stringify(i)}, ${JSON.stringify(j)}]`)
-        // console.log('[coor] => ', `[${JSON.stringify(x + i)}, ${JSON.stringify(y + j)}]`)
-        // console.log('JSON.stringify(currentShape.coordinates[i][j]) => ', JSON.stringify(currentShape.coordinates[i][j], null, 4))
-
-        // a shape can have negitive space
-        if (currentShape.coordinates[i][j]) {
-          gridClone[x + i][y + j] = currentShape
-        }
-
-        setGrid(gridClone)
-      }
-    }
+    const g = new Grid();
+    setGrid(g)
   }, [])
 
-  const renderCell = (cell: Shape | null) => {
+  const renderCell = (cell: ShapeType | null) => {
     if (cell === null) {
       return <div className={styles.cell}></div>
     } else {
@@ -158,7 +86,7 @@ export default function Grid () {
 
   return (
     <div className={styles['grid-container']}>
-      {grid.map((row, i) => (
+      {grid?.renderGrid().map((row, i) => (
         <ol key={i}>
           {row.map((col, j) => {
             return (

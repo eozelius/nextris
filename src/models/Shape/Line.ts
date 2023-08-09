@@ -1,6 +1,8 @@
-import Shape, { shapeCoorType } from '@/models/Shape'
+import Shape from '@/models/Shape'
+import { shapeCoorType } from '@/models/Shape/types'
 
 class LineShape extends Shape {
+  type: string = 'Line'
   static coordinates: shapeCoorType = [
     [1],
     [1],

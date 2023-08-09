@@ -1,15 +1,4 @@
-export type coorTuple = {
-  x: number,
-  y: number
-}
-
-/** 2-d array of numbers.
- * example: L Shape = [
- *   [1],
- *   [1, 1, 1]
- * ]
-*/
-export type shapeCoorType = Array<Array<number>>
+import { Color, shapeCoorType } from "./types"
 
 function randomColor(): Color {
   const numberToColorMap: {
@@ -24,14 +13,6 @@ function randomColor(): Color {
 
   const n = Math.floor(Math.random() * 5)
   return numberToColorMap[n]
-}
-
-export enum Color {
-  BLUE = 'BLUE',
-  RED = 'RED',
-  PURPLE = 'PURPLE',
-  PINK = 'PINK',
-  GREEN = 'GREEN'
 }
 
 class Shape {
