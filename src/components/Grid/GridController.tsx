@@ -9,8 +9,17 @@ import PresentationalGrid from './PresentationalGrid'
 
 
 export default function GridComponent () {
-  // clean up
-  document.addEventListener('keydown', (e: KeyboardEvent) => {
+  const [ gridInstance ] = useState<Grid>(
+    new Grid()
+  )
+    
+  const [ gridArray, setGridArray ] = useState<gridType>(
+    gridInstance.renderGrid()
+  )
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    console.log('e.code => ', e.code)
+
     if (['ArrowLeft', 'KeyA'].includes(e.code)) {
       gridInstance?.moveShape(Direction.LEFT)
     } else if (['ArrowRight', 'KeyD'].includes(e.code)) {
@@ -20,20 +29,11 @@ export default function GridComponent () {
     const updatedGrid: Array<Array<ShapeType | null>> = gridInstance?.renderGrid()
     // deep clone updated grid to force rerender, because changes to 2D array will not be tracked.
     setGridArray(JSON.parse(JSON.stringify(updatedGrid)))
-  })
-  
-  // const [ grid, setGrid ] = useState<Grid | null>(null)
-  const [ gridInstance ] = useState<Grid>(
-    new Grid()
-  )
-    
-  const [ gridArray, setGridArray ] = useState<gridType>(
-    gridInstance.renderGrid()
-  )
+  }
 
   return (
     gridArray
-      ? <PresentationalGrid grid={gridArray} />
+      ? <PresentationalGrid grid={gridArray} handleKeyDown={handleKeyDown} />
       : <p>loading</p>
   )
 }
