@@ -3,7 +3,7 @@ import Image from 'next/image'
 import styles from './page.module.css'
 import logo from '@/images/logo.png'
 import Score from '@/components/Score'
-import GridComponent from '@/components/Grid'
+import GridController from '@/components/Grid/GridController'
 import Footer from '@/components/Footer'
 
 export default function Home() {
@@ -21,7 +21,7 @@ export default function Home() {
 
       <Score />
 
-      <GridComponent />
+      <GridController />
 
       <Footer />
     </main>

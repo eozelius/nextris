@@ -2,9 +2,7 @@
 
 import Image from 'next/image'
 import classNames from 'classnames/bind'
-import { useState, useEffect } from 'react'
 
-import Grid from '@/models/Grid'
 import blue from '@/images/sprites/blue.png'
 import red from '@/images/sprites/red.png'
 import green from '@/images/sprites/green.png'
@@ -12,6 +10,7 @@ import purple from '@/images/sprites/purple.png'
 import pink from '@/images/sprites/pink.png'
 import styles from './Grid.module.css'
 import { Color, ShapeType } from '@/models/Shape/types'
+import { gridType } from '@/models/Grid'
 
 const colorToRender = (color: Color) => {
   let src;
@@ -46,25 +45,14 @@ const colorToRender = (color: Color) => {
   )
 }
 
-export default function GridComponent () {
-  // clean up
-  // document.addEventListener('keydown', (e: KeyboardEvent) => {
-  //   if (['ArrowLeft', 'KeyA'].includes(e.code)) {
-  //     grid.moveShape(Direction.LEFT)
-  //   } else if (['ArrowRight', 'KeyD'].includes(e.code)) {
-  //     grid.moveShape(Direction.RIGHT)
-  //   }
-  // })
+type GridPresentationalProps = {
+  grid: gridType
+}
+
+export default function GridPresentational ({ grid }: GridPresentationalProps) {
+
+  console.log('<PresnetationalGrid /> grid => ', JSON.stringify(grid, null, 4))
   
-  const [ grid, setGrid ] = useState<Grid | null>(null)
-
-  // wrap in a one-time useEffect to prevent multiple instantiations of Grid.
-  // Might be about to move this to another util/Singleton etc...
-  useEffect(() => {
-    const g = new Grid();
-    setGrid(g)
-  }, [])
-
   const renderCell = (cell: ShapeType | null) => {
     if (cell === null) {
       return <div className={styles.cell}></div>
@@ -86,7 +74,7 @@ export default function GridComponent () {
 
   return (
     <div className={styles['grid-container']}>
-      {grid?.renderGrid().map((row, i) => (
+      {grid.map((row, i) => (
         <ol key={i}>
           {row.map((col, j) => {
             return (

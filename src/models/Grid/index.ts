@@ -11,10 +11,13 @@ export enum Direction {
   RIGHT = 'RIGHT',
 }
 
+export type gridType = Array<Array<ShapeType | null>>
+
 export default class Grid {
-  private grid: Array<Array<ShapeType | null>>
+  private grid: gridType
   private currentShape: ShapeType
-  private startingCoordinate: coorTuple = { x: 0, y: 4 }
+  private startingCoordinates: coorTuple = { x: 0, y: 4 }
+  private currentCoordinates: coorTuple
   
   constructor() {
     /** Initialize Grid.
@@ -50,7 +53,9 @@ export default class Grid {
     ]
     this.currentShape = generateRandomShape()
 
-    const { x, y } = this.startingCoordinate
+    const { x, y } = this.startingCoordinates
+    this.currentCoordinates = { x, y }
+    
     for (let i = 0; i < this.currentShape.coordinates.length; i++){
       const row = this.currentShape.coordinates[i]
       for (let j = 0; j < row.length; j++) {
@@ -78,11 +83,30 @@ export default class Grid {
 
   moveShape (direction: Direction) {
     console.log('[Grid class] moveShape() direction => ', direction)
+    // console.log('[Grid class] moveShape() this.currentShape => ', this.currentShape)
+    // console.log('[Grid class] moveShape() this.currentCoordinate => ', this.currentCoordinates)
+
+    // this.clearShape()
   }
 
-  renderGrid () {
-    console.log('[Grid class] renderGrid() this.grid => ', this.grid)
+  // private clearShape() {
 
+  //   console.log('clearShape() => ')
+    
+  //   const shapeToClear = this.currentShape
+  //   const { x, y } = this.currentCoordinates
+
+  //   for (let i = 0; i < shapeToClear.coordinates.length; i++){
+  //     const row = shapeToClear.coordinates[i]
+  //     for (let j = 0; j < row.length; j++) {
+  //       this.grid[x + i][y + j] = null
+  //     }
+  //   }
+
+  //   console.log('JSON.stringify(this.grid) => ', JSON.stringify(this.grid, null, 4))
+  // }
+
+  renderGrid () {
     return this.grid
   }
 }
