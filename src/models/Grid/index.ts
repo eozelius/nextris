@@ -51,24 +51,8 @@ export default class Grid {
 
     const { x, y } = this.startingCoordinates
     this.currentCoordinates = { x, y }
-    
-    for (let i = 0; i < this.currentShape.coordinates.length; i++){
-      const row = this.currentShape.coordinates[i]
-      for (let j = 0; j < row.length; j++) {
-        // console.log('    >>>> col >>>> ', JSON.stringify(this.grid,null, 4))
-        // console.log('[x, y] => ', `[${JSON.stringify(x)}, ${JSON.stringify(y)}]`)
-        // console.log('[i, j] => ', `[${JSON.stringify(i)}, ${JSON.stringify(j)}]`)
-        // console.log('[coor] => ', `[${JSON.stringify(x + i)}, ${JSON.stringify(y + j)}]`)
-        // console.log(`JSON.stringify(currentShape.coordinates[${i}][${j}]) => `, JSON.stringify(this.currentShape.coordinates[i][j], null, 4))
 
-        // a shape can have negitive space
-        if (this.currentShape.coordinates[i][j] === 1) {
-          this.grid[x + i][y + j] = this.currentShape
-        }
-      }
-    }
-
-    return this
+    this.renderShape(this.startingCoordinates)
   }
 
   getCurrentShape () {
@@ -167,10 +151,10 @@ export default class Grid {
     }
   }
 
-  private renderShape(coordinates: coorTuple) {
-    // console.log('[ GridClass ] renderShape() coordinates => ', coordinates)
+  private renderShape(startingCoordinates: coorTuple) {
+    // console.log('[ GridClass ] renderShape() startingCoordinates => ', startingCoordinates)
 
-    const { x, y } = coordinates
+    const { x, y } = startingCoordinates
     this.currentCoordinates = { x, y }
 
     for (let i = 0; i < this.currentShape.coordinates.length; i++){
