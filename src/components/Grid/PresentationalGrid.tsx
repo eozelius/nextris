@@ -50,8 +50,7 @@ type GridPresentationalProps = {
 }
 
 export default function GridPresentational ({ grid }: GridPresentationalProps) {
-
-  console.log('<PresnetationalGrid /> grid => ', JSON.stringify(grid, null, 4))
+  // console.log('<PresnetationalGrid /> grid => ', JSON.stringify(grid, null, 4))
   
   const renderCell = (cell: ShapeType | null) => {
     if (cell === null) {

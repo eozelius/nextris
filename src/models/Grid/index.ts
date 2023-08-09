@@ -25,10 +25,6 @@ export default class Grid {
      * 2. get a random shape
      * 3. place the shape at this.startingCoordinate
     */
-    // const rows = new Array(20)
-    // const cols = new Array(10).fill(null)
-
-    // this.grid = rows.fill(0).map(() => (cols))
     this.grid = [
       [null, null, null, null, null, null, null, null, null, null],
       [null, null, null, null, null, null, null, null, null, null],
@@ -83,28 +79,26 @@ export default class Grid {
 
   moveShape (direction: Direction) {
     console.log('[Grid class] moveShape() direction => ', direction)
-    // console.log('[Grid class] moveShape() this.currentShape => ', this.currentShape)
-    // console.log('[Grid class] moveShape() this.currentCoordinate => ', this.currentCoordinates)
+    console.log('[Grid class] moveShape() this.currentShape => ', this.currentShape)
+    console.log('[Grid class] moveShape() this.currentCoordinate => ', this.currentCoordinates)
 
-    // this.clearShape()
+    this.clearShape()
   }
 
-  // private clearShape() {
+  private clearShape() {
 
-  //   console.log('clearShape() => ')
+    console.log('clearShape() => ')
     
-  //   const shapeToClear = this.currentShape
-  //   const { x, y } = this.currentCoordinates
+    const shapeToClear = this.currentShape
+    const { x, y } = this.currentCoordinates
 
-  //   for (let i = 0; i < shapeToClear.coordinates.length; i++){
-  //     const row = shapeToClear.coordinates[i]
-  //     for (let j = 0; j < row.length; j++) {
-  //       this.grid[x + i][y + j] = null
-  //     }
-  //   }
-
-  //   console.log('JSON.stringify(this.grid) => ', JSON.stringify(this.grid, null, 4))
-  // }
+    for (let i = 0; i < shapeToClear.coordinates.length; i++){
+      const row = shapeToClear.coordinates[i]
+      for (let j = 0; j < row.length; j++) {
+        this.grid[x + i][y + j] = null
+      }
+    }
+  }
 
   renderGrid () {
     return this.grid
