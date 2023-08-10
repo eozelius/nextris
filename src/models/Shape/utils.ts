@@ -12,7 +12,7 @@ export const generateRandomShape = (): ShapeType => {
     3: RightZ
   }
 
-  const n = Math.floor(Math.random() * 1)
+  const n = Math.floor(Math.random() * 4)
   const randomShape = numberToShapeMap[n]
   const instantiatedRandomShape = new randomShape()
   return instantiatedRandomShape

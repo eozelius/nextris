@@ -55,12 +55,6 @@ export default class Grid {
     this.renderShape(this.startingCoordinates)
   }
 
-  getCurrentShape () {
-    console.log('[Grid class] getCurrentShape() this.currentShape => ', this.currentShape)
-
-    return this.currentShape
-  }
-
   moveShape (direction: Direction) {
     /**
      * @description - iterate through a shape's coordinates and find/return the length of the
