@@ -12,10 +12,21 @@ export default function GridComponent () {
 
   // leverage useEffect(..., []) to only invoke new Grid() once.
   useEffect(() => {
+    // initialize grid
     const g = new Grid()
     setGridInstance(g)
     setGridArray(g.renderGrid())
+
+    // initialize interval to move shape down
+    const interval = setInterval(() => {
+      g?.moveShape(Direction.DOWN)
+      const newGrid = g?.renderGrid() || []
+      setGridArray(JSON.parse(JSON.stringify(newGrid)))
+    }, 500)
+
+    return () => clearInterval(interval)
   }, [])
+
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (['ArrowLeft', 'KeyA'].includes(e.code)) {

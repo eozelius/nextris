@@ -9,6 +9,7 @@ export type coorTuple = {
 export enum Direction {
   LEFT = 'LEFT',
   RIGHT = 'RIGHT',
+  DOWN ='DOWN'
 }
 
 export type gridType = Array<Array<ShapeType | null>>
@@ -73,12 +74,15 @@ export default class Grid {
     const isWithinBounds = ({
       shapeWidth,
       gridWidth,
+      gridLength,
       moveToCoordinates
     }: {
       shapeWidth: number,
       gridWidth: number,
+      gridLength: number,
       moveToCoordinates: coorTuple
     }): boolean => {
+      console.log('[ GridClass ] isWithinBoudns() gridLength => ', gridLength)
       // console.log('[ GridClass ] isWithinBoudns() shapeWidth => ', width)
       // console.log('[ GridClass ] isWithinBoudns() currentCoordinates => ', currentCoordinates)
       // console.log('[ GridClass ] isWithinBoudns() moveToCoordinates => ', moveToCoordinates)
@@ -96,6 +100,11 @@ export default class Grid {
         return false
       }
 
+      // OB DOWN
+      if (moveToCoordinates.x >= gridLength - 1) {
+        return false
+      }
+
       return true
     }
     
@@ -107,10 +116,15 @@ export default class Grid {
 
     if (direction === Direction.LEFT) {
       newCoors = { x: this.currentCoordinates.x, y: this.currentCoordinates.y - 1 }
-    } else {
+    } else if (direction === Direction.RIGHT) {
       newCoors = { x: this.currentCoordinates.x, y: this.currentCoordinates.y + 1 }
+    } else if (direction === Direction.DOWN) {
+      newCoors = { x: this.currentCoordinates.x + 1, y: this.currentCoordinates.y }
+    } else {
+      throw new Error('Unrecognized direction => ', direction)
     }
 
+    const gridLength = this.grid.length
     const shapeWidth = getShapeLength(this.currentShape)
     // console.log('[ GridClass ] moveShape() width => ', width)
 
@@ -119,6 +133,7 @@ export default class Grid {
     const isMoveWithinBounds = isWithinBounds({
       shapeWidth,
       gridWidth,
+      gridLength,
       moveToCoordinates: newCoors 
     })
 
