@@ -85,6 +85,9 @@ export default class Grid {
       return shape.coordinates.length
     }
 
+    // console.log('[ Grid<> ] moveShape() this.grid => ', this.grid)
+    // console.log('[ Grid<> ] moveShape() this.currentShape => ', this.currentShape)
+
 
     const doesNotCollide = ({ moveToCoordinates }: {
       moveToCoordinates: coorTuple
