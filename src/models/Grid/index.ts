@@ -65,7 +65,7 @@ export default class Grid {
     }, 1000)
   }
 
-  endGame() {
+  pauseGame() {
     clearInterval(this.gameLoop)
   }
 
@@ -83,6 +83,36 @@ export default class Grid {
 
     function getShapeHeight (shape: ShapeType) {
       return shape.coordinates.length
+    }
+
+
+    const doesNotCollide = ({ moveToCoordinates }: {
+      moveToCoordinates: coorTuple
+    }): boolean => {
+      for (let i = 0; i < this.currentShape.coordinates.length; i++) {
+        const row = this.currentShape.coordinates[i]
+        for (let j = 0; j < row.length; j++) {
+          if (this.currentShape.coordinates[i][j] === 1) {
+            const {x, y} = moveToCoordinates
+            console.log(`[ Grid ] doesNotCollide() { i: ${i}, j: ${j}}; { x: ${x}, y: ${y} }`)
+
+            const cellToCheck = this.grid[x + i][y + j]
+
+            if (cellToCheck !== null && cellToCheck.id !== this.currentShape.id) {
+              console.log(`[ Grid ] doesNotCollide() this.grid[${x+i}][${y+j}] is already occupied!!`)
+              return false
+            }
+            // } else {
+            //   console.log(`[ Grid ] doesNotCollide() this.grid[${x+i}][${y+j}] is free continue!!`)
+            // }
+          }
+          // } else {
+          //   console.log(`[ Grid ] doesNotCollide() [${i}][${j}] is zero, no need to check`)
+          // }
+        }
+      }
+      
+      return true
     }
 
     /**
@@ -161,6 +191,12 @@ export default class Grid {
       gridLength,
       moveToCoordinates: newCoors 
     })
+
+    const isLegalCollisionMove = doesNotCollide({
+      moveToCoordinates: newCoors
+    })
+
+    console.log('[ Grid ] moveShape() isLegalCollisionMove => ', isLegalCollisionMove)
 
     // OB right
     if (isMoveWithinBounds) {

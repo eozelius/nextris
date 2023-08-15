@@ -45,6 +45,11 @@ export default function GridController () {
     gridInstance?.startGame()
   } 
 
+  const handlePauseGame = (e: React.MouseEvent) => {
+    e.preventDefault()
+    gridInstance?.pauseGame()
+  }
+
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -55,6 +60,12 @@ export default function GridController () {
           start game
         </button>
 
+        <button
+          onClick={handlePauseGame}
+          className={styles['start-game-btn']}
+        >
+          pause
+        </button>
       </div>
       
       {gridArray && gridArray.length
