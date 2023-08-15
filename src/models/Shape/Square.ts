@@ -1,17 +1,17 @@
 import Shape from '@/models/Shape'
 import { Color, ShapesEnum, shapeCoorType } from '@/models/Shape/types'
 
-class RightZShape extends Shape {
-  type: ShapesEnum = ShapesEnum.RightZ
-  color: Color = Color.YELLOW
+class Square extends Shape {
+  type: ShapesEnum = ShapesEnum.Square
+  color: Color = Color.TEAL
   static coordinates: shapeCoorType = [
-    [0, 1, 1],
+    [1, 1],
     [1, 1]
   ]
 
   constructor () {
-    super(RightZShape.coordinates)
+    super(Square.coordinates)
   }
 }
 
-export default RightZShape
+export default Square

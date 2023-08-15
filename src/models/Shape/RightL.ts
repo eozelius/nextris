@@ -1,19 +1,17 @@
 import Shape from '@/models/Shape'
 import { Color, ShapesEnum, shapeCoorType } from '@/models/Shape/types'
 
-class Line extends Shape {
-  type: ShapesEnum = ShapesEnum.Line
-  color: Color = Color.PURPLE
+class RightL extends Shape {
+  type: ShapesEnum = ShapesEnum.RightL
+  color: Color = Color.GREEN
   static coordinates: shapeCoorType = [
-    [1],
-    [1],
-    [1],
-    [1]
+    [1, 1, 1],
+    [1, 0, 0]
   ]
 
   constructor () {
-    super(Line.coordinates)
+    super(RightL.coordinates)
   }
 }
 
-export default Line
+export default RightL

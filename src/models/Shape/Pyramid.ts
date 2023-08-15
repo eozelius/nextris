@@ -1,19 +1,17 @@
 import Shape from '@/models/Shape'
 import { Color, ShapesEnum, shapeCoorType } from '@/models/Shape/types'
 
-class Line extends Shape {
-  type: ShapesEnum = ShapesEnum.Line
-  color: Color = Color.PURPLE
+class Pyramid extends Shape {
+  type: ShapesEnum = ShapesEnum.Pyramid
+  color: Color = Color.PINK
   static coordinates: shapeCoorType = [
-    [1],
-    [1],
-    [1],
-    [1]
+    [0, 1],
+    [1, 1, 1]
   ]
 
   constructor () {
-    super(Line.coordinates)
+    super(Pyramid.coordinates)
   }
 }
 
-export default Line
+export default Pyramid

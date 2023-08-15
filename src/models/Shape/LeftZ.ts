@@ -1,8 +1,9 @@
 import Shape from '@/models/Shape'
-import { shapeCoorType } from '@/models/Shape/types'
+import { Color, shapeCoorType, ShapesEnum } from '@/models/Shape/types'
 
 class LeftZShape extends Shape {
-  type: string = 'LeftZ'
+  type: ShapesEnum = ShapesEnum.LeftZ
+  color: Color = Color.RED
   static coordinates: shapeCoorType = [
     [1, 1],
     [0, 1, 1]

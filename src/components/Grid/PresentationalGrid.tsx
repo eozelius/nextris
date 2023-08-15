@@ -8,6 +8,8 @@ import red from '@/images/sprites/red.png'
 import green from '@/images/sprites/green.png'
 import purple from '@/images/sprites/purple.png'
 import pink from '@/images/sprites/pink.png'
+import yellow from '@/images/sprites/yellow.png'
+import teal from '@/images/sprites/teal.png'
 import styles from './Grid.module.css'
 import { Color, ShapeType } from '@/models/Shape/types'
 import { gridType } from '@/models/Grid'
@@ -30,6 +32,12 @@ const colorToRender = (color: Color) => {
       break
     case Color.PINK:
       src = pink
+      break
+    case Color.YELLOW:
+      src = yellow
+      break
+    case Color.TEAL:
+      src = teal
       break
     default:
       throw new Error('Invalid color')
