@@ -5,8 +5,9 @@ import { useState, useEffect } from 'react'
 import Grid, { Direction, gridType } from '@/models/Grid'
 import { ShapeType } from '@/models/Shape/types'
 import PresentationalGrid from './PresentationalGrid'
+import styles from './Grid.module.css'
 
-export default function GridComponent () {
+export default function GridController () {
   const [ gridInstance, setGridInstance ] = useState<Grid | null>(null)
   const [ gridArray, setGridArray ] = useState<gridType | null>(null)
 
@@ -17,16 +18,15 @@ export default function GridComponent () {
     setGridInstance(g)
     setGridArray(g.renderGrid())
 
-    // initialize interval to move shape down
+    // initialize interval to constantly rerender grid every 1000 ms
     const interval = setInterval(() => {
-      g?.moveShape(Direction.DOWN)
+      // g?.moveShape(Direction.DOWN)
       const newGrid = g?.renderGrid() || []
       setGridArray(JSON.parse(JSON.stringify(newGrid)))
-    }, 500)
+    }, 200)
 
     return () => clearInterval(interval)
   }, [])
-
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (['ArrowLeft', 'KeyA'].includes(e.code)) {
@@ -40,9 +40,26 @@ export default function GridComponent () {
     setGridArray(JSON.parse(JSON.stringify(updatedGrid)))
   }
 
+  const handleStartGame = (e: React.MouseEvent) => {
+    e.preventDefault()
+    gridInstance?.startGame()
+  } 
+
   return (
-    gridArray && gridArray.length
-      ? <PresentationalGrid grid={gridArray} handleKeyDown={handleKeyDown} />
-      : <p>loading</p>
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <button
+          onClick={handleStartGame}
+          className={styles['start-game-btn']}
+        >
+          start game
+        </button>
+
+      </div>
+      
+      {gridArray && gridArray.length
+        ? <PresentationalGrid grid={gridArray} handleKeyDown={handleKeyDown} />
+        : <p>loading</p>}
+    </div>
   )
 }

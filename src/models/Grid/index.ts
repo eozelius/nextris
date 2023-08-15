@@ -18,7 +18,10 @@ export default class Grid {
   private grid: gridType
   private currentShape: ShapeType
   private startingCoordinates: coorTuple = { x: 0, y: 4 }
-  private currentCoordinates: coorTuple
+  private currentCoordinates: coorTuple = { x: 0, y: 4 }
+
+  // typeof Interval
+  private gameLoop: any
   
   constructor() {
     /** Initialize Grid.
@@ -37,26 +40,37 @@ export default class Grid {
       [null, null, null, null, null, null, null, null, null, null],
       [null, null, null, null, null, null, null, null, null, null],
       [null, null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null, null]
+      // [null, null, null, null, null, null, null, null, null, null],
+      // [null, null, null, null, null, null, null, null, null, null],
+      // [null, null, null, null, null, null, null, null, null, null],
+      // [null, null, null, null, null, null, null, null, null, null],
+      // [null, null, null, null, null, null, null, null, null, null],
+      // [null, null, null, null, null, null, null, null, null, null],
+      // [null, null, null, null, null, null, null, null, null, null],
+      // [null, null, null, null, null, null, null, null, null, null],
+      // [null, null, null, null, null, null, null, null, null, null],
+      // [null, null, null, null, null, null, null, null, null, null]
     ]
     this.currentShape = generateRandomShape()
+  }
 
+  startGame(){
     const { x, y } = this.startingCoordinates
     this.currentCoordinates = { x, y }
 
     this.renderShape(this.startingCoordinates)
+
+    this.gameLoop = setInterval(() => {
+      this.moveShape(Direction.DOWN)
+    }, 1000)
+  }
+
+  endGame() {
+    clearInterval(this.gameLoop)
   }
 
   moveShape (direction: Direction) {
+    // TODO: not entirely sure I love these 2 helper functions living inside of moveShape().  TBD where they should live.    
     /**
      * @description - iterate through a shape's coordinates and find/return the length of the
      * longest  row
@@ -67,22 +81,28 @@ export default class Grid {
       return Math.max(...(shapeRows))
     }
 
+    function getShapeHeight (shape: ShapeType) {
+      return shape.coordinates.length
+    }
+
     /**
      * @description - determine if the move would be in grid bounds
      * @returns [Boolean] - whether or not the move would be within grid bounds
      */
     const isWithinBounds = ({
       shapeWidth,
+      shapeHeight,
       gridWidth,
       gridLength,
       moveToCoordinates
     }: {
       shapeWidth: number,
+      shapeHeight: number,
       gridWidth: number,
       gridLength: number,
       moveToCoordinates: coorTuple
     }): boolean => {
-      console.log('[ GridClass ] isWithinBoudns() gridLength => ', gridLength)
+      // console.log('[ GridClass ] isWithinBoudns() gridLength => ', gridLength)
       // console.log('[ GridClass ] isWithinBoudns() shapeWidth => ', width)
       // console.log('[ GridClass ] isWithinBoudns() currentCoordinates => ', currentCoordinates)
       // console.log('[ GridClass ] isWithinBoudns() moveToCoordinates => ', moveToCoordinates)
@@ -101,7 +121,12 @@ export default class Grid {
       }
 
       // OB DOWN
-      if (moveToCoordinates.x >= gridLength - 1) {
+      if (moveToCoordinates.x + shapeHeight > gridLength) {
+        const { x, y } = this.startingCoordinates
+        this.currentCoordinates = { x, y }
+        this.currentShape = generateRandomShape()
+        this.renderShape(this.startingCoordinates)
+
         return false
       }
 
@@ -126,12 +151,12 @@ export default class Grid {
 
     const gridLength = this.grid.length
     const shapeWidth = getShapeLength(this.currentShape)
-    // console.log('[ GridClass ] moveShape() width => ', width)
-
+    const shapeHeight = getShapeHeight(this.currentShape)
     const gridWidth = this.grid[0].length
 
     const isMoveWithinBounds = isWithinBounds({
       shapeWidth,
+      shapeHeight,
       gridWidth,
       gridLength,
       moveToCoordinates: newCoors 
