@@ -1,5 +1,6 @@
-import { ShapeType } from "../Shape/types"
-import { generateRandomShape } from "../Shape/utils"
+import { isWithinBounds } from './utils'
+import { ShapeType } from "@/models/Shape/types"
+import { generateRandomShape } from "@/models/Shape/utils"
 
 export type coorTuple = {
   x: number,
@@ -123,54 +124,6 @@ export default class Grid {
       }  
       return true
     }
-
-    /**
-     * @description - determine if the move would be in grid bounds
-     * @returns [Boolean] - whether or not the move would be within grid bounds
-     */
-    const isWithinBounds = ({
-      shapeWidth,
-      shapeHeight,
-      gridWidth,
-      gridLength,
-      moveToCoordinates
-    }: {
-      shapeWidth: number,
-      shapeHeight: number,
-      gridWidth: number,
-      gridLength: number,
-      moveToCoordinates: coorTuple
-    }): boolean => {
-      // console.log('[ GridClass ] isWithinBoudns() gridLength => ', gridLength)
-      // console.log('[ GridClass ] isWithinBoudns() shapeWidth => ', width)
-      // console.log('[ GridClass ] isWithinBoudns() currentCoordinates => ', currentCoordinates)
-      // console.log('[ GridClass ] isWithinBoudns() moveToCoordinates => ', moveToCoordinates)
-      
-      // const gridWidth = this.grid[0].length
-      // console.log('[ GridClass ] isWithinBoudns() this.grid.length => ', JSON.stringify(gridWidth ,null,4))
-
-      // OB LEFT
-      if (moveToCoordinates.y < 0) {
-        return false
-      }
-
-      // OB RIGHT
-      if (moveToCoordinates.y + shapeWidth > gridWidth) {
-        return false
-      }
-
-      // OB DOWN
-      if (moveToCoordinates.x + shapeHeight > gridLength) {
-        const { x, y } = this.startingCoordinates
-        this.currentCoordinates = { x, y }
-        this.currentShape = generateRandomShape()
-        this.renderShape(this.startingCoordinates)
-
-        return false
-      }
-
-      return true
-    }
     
     let newCoors: coorTuple;
 
@@ -198,6 +151,13 @@ export default class Grid {
     })
 
     if (!isMoveWithinBounds) {
+      // If OB down, start a new shape at the top.  If OB left/right, just keep going.
+      if (direction === Direction.DOWN) {
+        const { x, y } = this.startingCoordinates
+        this.currentCoordinates = { x, y }
+        this.currentShape = generateRandomShape()
+        this.renderShape(this.startingCoordinates)
+      }
       return
     }
     
