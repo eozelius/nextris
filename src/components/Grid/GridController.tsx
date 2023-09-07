@@ -19,8 +19,10 @@ export default function GridController () {
     setGridArray(g.renderGrid())
 
     // initialize interval to constantly rerender grid every 1000 ms
+    // todo: replace this with a rerender whenever new props are received to be more "reacty" :)
+    // although that will probably require passing a JSON.stringify'd string instead of a 2D array
+    // since JS cannot detect changes in 2d arrays well.
     const interval = setInterval(() => {
-      // g?.moveShape(Direction.DOWN)
       const newGrid = g?.renderGrid() || []
       setGridArray(JSON.parse(JSON.stringify(newGrid)))
     }, 200)

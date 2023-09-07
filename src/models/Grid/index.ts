@@ -100,17 +100,22 @@ export default class Grid {
         for (let j = 0; j < lastRow.length; j++) {
           if (lastRow[j] === 1) {
             const {x, y} = moveToCoordinates
-            console.log(`moveToCoor: { x: ${x}, y: ${y} }`)
+            // might want to double check that y is within grid bounds.  Technically, this function is
+            // dependent on isWithinBounds() passing before running this function.  Not ideal.
+            // console.log(`moveToCoor: { x: ${x}, y: ${y} }`)
 
             const xPlusShapeHeight = x + shapeHeight - 1
-
-            console.log('[ <Grid> ] doesNotCollide() y => ', y)
-            console.log('[ <Grid> ] doesNotCollide() xPlusShapeHeight => ', xPlusShapeHeight)
-            
             const cellToCheck = this.grid[xPlusShapeHeight][y]
 
             if (cellToCheck !== null && cellToCheck?.id !== this.currentShape.id) {
               console.log('collision Down detected! => ')
+
+              // Yikes.  this reseting/creating a new shape should be be the responsibility of this function
+              const { x, y } = this.startingCoordinates
+              this.currentCoordinates = { x, y }
+              this.currentShape = generateRandomShape()
+              this.renderShape(this.startingCoordinates)
+
               return false
             }
           }
@@ -230,8 +235,6 @@ export default class Grid {
   }
 
   private renderShape(startingCoordinates: coorTuple) {
-    // console.log('[ GridClass ] renderShape() startingCoordinates => ', startingCoordinates)
-
     const { x, y } = startingCoordinates
     this.currentCoordinates = { x, y }
 
