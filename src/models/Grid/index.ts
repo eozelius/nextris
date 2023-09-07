@@ -1,4 +1,4 @@
-import { isWithinBounds, doesNotCollide } from './utils'
+import { isWithinBounds, doesNotCollide, getShapeLength, getShapeHeight } from './utils'
 import { ShapeType } from "@/models/Shape/types"
 import { generateRandomShape } from "@/models/Shape/utils"
 
@@ -71,21 +71,6 @@ export default class Grid {
   }
 
   moveShape (direction: Direction) {
-    // TODO: not entirely sure I love these 2 helper functions living inside of moveShape().  TBD where they should live.    
-    /**
-     * @description - iterate through a shape's coordinates and find/return the length of the
-     * longest  row
-     * @returns [Int] - 1 based number representing the length of the shape's widest row.
-     */
-    function getShapeLength (shape: ShapeType) {
-      const shapeRows = shape.coordinates.map((r) => r.length)
-      return Math.max(...(shapeRows))
-    }
-
-    function getShapeHeight (shape: ShapeType) {
-      return shape.coordinates.length
-    }
-    
     let newCoors: coorTuple;
 
     if (direction === Direction.LEFT) {
@@ -138,7 +123,6 @@ export default class Grid {
       return
     }
 
-    // OB right
     if (isMoveWithinBounds && isLegalCollisionMove) {
       this.clearShape()
       this.renderShape(newCoors)
@@ -146,7 +130,8 @@ export default class Grid {
   }
 
   renderGrid () {
-    return this.grid
+    // clone and Return a JS 2D array
+    return JSON.parse(JSON.stringify(this.grid))
   }
 
   private clearShape() {
@@ -162,19 +147,17 @@ export default class Grid {
   }
 
   private renderShape(startingCoordinates: coorTuple) {
+    // TODO: throw an error if attempting to draw a shape on top of another shape.
+    // in theory this should never happen since we run doesNotCollide(), but it 
+    // seems to be buggy with certain types of shapes.
+
     const { x, y } = startingCoordinates
     this.currentCoordinates = { x, y }
 
     for (let i = 0; i < this.currentShape.coordinates.length; i++){
       const row = this.currentShape.coordinates[i]
       for (let j = 0; j < row.length; j++) {
-        // console.log('    >>>> col >>>> ', JSON.stringify(this.grid,null, 4))
-        // console.log('[x, y] => ', `[${JSON.stringify(x)}, ${JSON.stringify(y)}]`)
-        // console.log('[i, j] => ', `[${JSON.stringify(i)}, ${JSON.stringify(j)}]`)
-        // console.log('[coor] => ', `[${JSON.stringify(x + i)}, ${JSON.stringify(y + j)}]`)
-        // console.log(`JSON.stringify(currentShape.coordinates[${i}][${j}]) => `, JSON.stringify(this.currentShape.coordinates[i][j], null, 4))
-
-        // a shape can have negitive space
+        // a shape can have negitive space, so necessary to check that.
         if (this.currentShape.coordinates[i][j] === 1) {
           this.grid[x + i][y + j] = this.currentShape
         }

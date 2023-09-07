@@ -53,6 +53,7 @@ export const doesNotCollide = ({
   moveToCoordinates: coorTuple,
   shapeHeight: number
 }): boolean => {
+  // Collision DOWN
   if (direction === Direction.DOWN) {
     const lastRow = currentShape.coordinates[currentShape.coordinates.length - 1]
 
@@ -73,4 +74,21 @@ export const doesNotCollide = ({
     }
   }
   return true
+}
+
+/**
+ * @description - iterate through a shape's coordinates and find/return the length of the longest row
+ * @returns [Int] - 1 based number representing the length of the shape's widest row.
+ */
+export function getShapeLength (shape: ShapeType) {
+  const shapeRows = shape.coordinates.map((r) => r.length)
+  return Math.max(...(shapeRows))
+}
+
+/**
+ * @description - determine a shapes height
+ * @returns [Int] - 1 based number representing the height of the shape's tallest column.
+ */
+export function getShapeHeight (shape: ShapeType) {
+  return shape.coordinates.length
 }
