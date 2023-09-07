@@ -1,4 +1,5 @@
-import { coorTuple } from "."
+import { Direction, coorTuple, gridType } from "."
+import { ShapeType } from "@/models/Shape/types"
 
 /**
  * @description - determine if the move would be in grid bounds
@@ -17,14 +18,6 @@ export const isWithinBounds = ({
   gridLength: number,
   moveToCoordinates: coorTuple
 }): boolean => {
-  // console.log('[ GridClass ] isWithinBoudns() gridLength => ', gridLength)
-  // console.log('[ GridClass ] isWithinBoudns() shapeWidth => ', width)
-  // console.log('[ GridClass ] isWithinBoudns() currentCoordinates => ', currentCoordinates)
-  // console.log('[ GridClass ] isWithinBoudns() moveToCoordinates => ', moveToCoordinates)
-  
-  // const gridWidth = this.grid[0].length
-  // console.log('[ GridClass ] isWithinBoudns() this.grid.length => ', JSON.stringify(gridWidth ,null,4))
-
   // OB LEFT
   if (moveToCoordinates.y < 0) {
     return false
@@ -40,5 +33,44 @@ export const isWithinBounds = ({
     return false
   }
 
+  return true
+}
+
+/**
+ * @description - determine if the move does not collide with another existing shape
+ * @returns [Boolean] - whether the move is legal, i.e. does not collide with another shape
+ */
+export const doesNotCollide = ({
+  currentShape,
+  direction,
+  grid,
+  moveToCoordinates,
+  shapeHeight
+}: {
+  currentShape: ShapeType,
+  direction: Direction,
+  grid: gridType,
+  moveToCoordinates: coorTuple,
+  shapeHeight: number
+}): boolean => {
+  if (direction === Direction.DOWN) {
+    const lastRow = currentShape.coordinates[currentShape.coordinates.length - 1]
+
+    for (let j = 0; j < lastRow.length; j++) {
+      if (lastRow[j] === 1) {
+        const {x, y} = moveToCoordinates
+        // might want to double check that y is within grid bounds.  Technically, this function is
+        // dependent on isWithinBounds() passing before running this function.  Not ideal.
+        // console.log(`moveToCoor: { x: ${x}, y: ${y} }`)
+
+        const xPlusShapeHeight = x + shapeHeight - 1
+        const cellToCheck = grid[xPlusShapeHeight][y]
+
+        if (cellToCheck !== null && cellToCheck?.id !== currentShape.id) {
+          return false
+        }
+      }
+    }
+  }
   return true
 }

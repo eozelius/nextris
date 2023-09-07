@@ -1,4 +1,4 @@
-import { isWithinBounds } from './utils'
+import { isWithinBounds, doesNotCollide } from './utils'
 import { ShapeType } from "@/models/Shape/types"
 import { generateRandomShape } from "@/models/Shape/utils"
 
@@ -85,45 +85,6 @@ export default class Grid {
     function getShapeHeight (shape: ShapeType) {
       return shape.coordinates.length
     }
-
-    const doesNotCollide = ({
-      direction,
-      moveToCoordinates,
-      shapeHeight
-    }: {
-      direction: Direction,
-      moveToCoordinates: coorTuple,
-      shapeHeight: number
-    }): boolean => {
-      if (direction === Direction.DOWN) {
-        const lastRow = this.currentShape.coordinates[this.currentShape.coordinates.length - 1]
-
-        for (let j = 0; j < lastRow.length; j++) {
-          if (lastRow[j] === 1) {
-            const {x, y} = moveToCoordinates
-            // might want to double check that y is within grid bounds.  Technically, this function is
-            // dependent on isWithinBounds() passing before running this function.  Not ideal.
-            // console.log(`moveToCoor: { x: ${x}, y: ${y} }`)
-
-            const xPlusShapeHeight = x + shapeHeight - 1
-            const cellToCheck = this.grid[xPlusShapeHeight][y]
-
-            if (cellToCheck !== null && cellToCheck?.id !== this.currentShape.id) {
-              console.log('collision Down detected! => ')
-
-              // Yikes.  this reseting/creating a new shape should be be the responsibility of this function
-              const { x, y } = this.startingCoordinates
-              this.currentCoordinates = { x, y }
-              this.currentShape = generateRandomShape()
-              this.renderShape(this.startingCoordinates)
-
-              return false
-            }
-          }
-        }
-      }  
-      return true
-    }
     
     let newCoors: coorTuple;
 
@@ -162,12 +123,18 @@ export default class Grid {
     }
     
     const isLegalCollisionMove = doesNotCollide({
+      currentShape: this.currentShape,
       direction,
+      grid: JSON.parse(JSON.stringify(this.renderGrid())), // Clone grid, just to be safe.
       moveToCoordinates: newCoors,
       shapeHeight
     })
     
     if (!isLegalCollisionMove) {
+      const { x, y } = this.startingCoordinates
+      this.currentCoordinates = { x, y }
+      this.currentShape = generateRandomShape()
+      this.renderShape(this.startingCoordinates)
       return
     }
 
