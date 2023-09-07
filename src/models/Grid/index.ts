@@ -37,9 +37,9 @@ export default class Grid {
       [null, null, null, null, null, null, null, null, null, null],
       [null, null, null, null, null, null, null, null, null, null],
       [null, null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null, null],
+      // [null, null, null, null, null, null, null, null, null, null],
+      // [null, null, null, null, null, null, null, null, null, null],
+      // [null, null, null, null, null, null, null, null, null, null],
       // [null, null, null, null, null, null, null, null, null, null],
       // [null, null, null, null, null, null, null, null, null, null],
       // [null, null, null, null, null, null, null, null, null, null],
@@ -85,36 +85,37 @@ export default class Grid {
       return shape.coordinates.length
     }
 
-    // console.log('[ Grid<> ] moveShape() this.grid => ', this.grid)
-    // console.log('[ Grid<> ] moveShape() this.currentShape => ', this.currentShape)
-
-
-    const doesNotCollide = ({ moveToCoordinates }: {
-      moveToCoordinates: coorTuple
+    const doesNotCollide = ({
+      direction,
+      moveToCoordinates,
+      shapeHeight
+    }: {
+      direction: Direction,
+      moveToCoordinates: coorTuple,
+      shapeHeight: number
     }): boolean => {
-      for (let i = 0; i < this.currentShape.coordinates.length; i++) {
-        const row = this.currentShape.coordinates[i]
-        for (let j = 0; j < row.length; j++) {
-          if (this.currentShape.coordinates[i][j] === 1) {
+      if (direction === Direction.DOWN) {
+        const lastRow = this.currentShape.coordinates[this.currentShape.coordinates.length - 1]
+
+        for (let j = 0; j < lastRow.length; j++) {
+          if (lastRow[j] === 1) {
             const {x, y} = moveToCoordinates
-            console.log(`[ Grid ] doesNotCollide() { i: ${i}, j: ${j}}; { x: ${x}, y: ${y} }`)
+            console.log(`moveToCoor: { x: ${x}, y: ${y} }`)
 
-            const cellToCheck = this.grid[x + i][y + j]
+            const xPlusShapeHeight = x + shapeHeight - 1
 
-            if (cellToCheck !== null && cellToCheck.id !== this.currentShape.id) {
-              console.log(`[ Grid ] doesNotCollide() this.grid[${x+i}][${y+j}] is already occupied!!`)
+            console.log('[ <Grid> ] doesNotCollide() y => ', y)
+            console.log('[ <Grid> ] doesNotCollide() xPlusShapeHeight => ', xPlusShapeHeight)
+            
+            const cellToCheck = this.grid[xPlusShapeHeight][y]
+
+            if (cellToCheck !== null && cellToCheck?.id !== this.currentShape.id) {
+              console.log('collision Down detected! => ')
               return false
             }
-            // } else {
-            //   console.log(`[ Grid ] doesNotCollide() this.grid[${x+i}][${y+j}] is free continue!!`)
-            // }
           }
-          // } else {
-          //   console.log(`[ Grid ] doesNotCollide() [${i}][${j}] is zero, no need to check`)
-          // }
         }
-      }
-      
+      }  
       return true
     }
 
@@ -166,10 +167,6 @@ export default class Grid {
       return true
     }
     
-    // console.log('[Grid class] moveShape() direction => ', direction)
-    // console.log('[Grid class] moveShape() this.currentShape => ', this.currentShape)
-    // console.log('[Grid class] moveShape() this.currentCoordinate => ', this.currentCoordinates)
-
     let newCoors: coorTuple;
 
     if (direction === Direction.LEFT) {
@@ -195,14 +192,22 @@ export default class Grid {
       moveToCoordinates: newCoors 
     })
 
+    if (!isMoveWithinBounds) {
+      return
+    }
+    
     const isLegalCollisionMove = doesNotCollide({
-      moveToCoordinates: newCoors
+      direction,
+      moveToCoordinates: newCoors,
+      shapeHeight
     })
-
-    console.log('[ Grid ] moveShape() isLegalCollisionMove => ', isLegalCollisionMove)
+    
+    if (!isLegalCollisionMove) {
+      return
+    }
 
     // OB right
-    if (isMoveWithinBounds) {
+    if (isMoveWithinBounds && isLegalCollisionMove) {
       this.clearShape()
       this.renderShape(newCoors)
     }
