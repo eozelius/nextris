@@ -158,6 +158,7 @@ export default class Grid {
           console.error('[ Grid ] renderShape() this.grid => ', JSON.stringify(this.grid, null, 4))
           console.error(`[ Grid ] renderShape() => { i: ${i}, j: ${j} }; { x: ${x}, y: ${y}`)
           console.error('[ Grid ] renderShape() this.currentCoordinates => ', JSON.stringify(this.currentCoordinates))
+          alert('[ Grid ] renderShape() attempting to draw a shape in a non empty square.')
           throw new Error('[ Grid ] renderShape() attempting to draw a shape in a non empty square.')
         }
 
