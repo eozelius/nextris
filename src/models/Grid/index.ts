@@ -147,16 +147,20 @@ export default class Grid {
   }
 
   private renderShape(startingCoordinates: coorTuple) {
-    // TODO: throw an error if attempting to draw a shape on top of another shape.
-    // in theory this should never happen since we run doesNotCollide(), but it 
-    // seems to be buggy with certain types of shapes.
-
     const { x, y } = startingCoordinates
     this.currentCoordinates = { x, y }
 
     for (let i = 0; i < this.currentShape.coordinates.length; i++){
       const row = this.currentShape.coordinates[i]
       for (let j = 0; j < row.length; j++) {
+        if (this.grid[x + i][y + j] !== null) {
+          console.error('[ Grid ] renderShape() attempting to draw a shape in a non empty square.')
+          console.error('[ Grid ] renderShape() this.grid => ', JSON.stringify(this.grid, null, 4))
+          console.error(`[ Grid ] renderShape() => { i: ${i}, j: ${j} }; { x: ${x}, y: ${y}`)
+          console.error('[ Grid ] renderShape() this.currentCoordinates => ', JSON.stringify(this.currentCoordinates))
+          throw new Error('[ Grid ] renderShape() attempting to draw a shape in a non empty square.')
+        }
+
         // a shape can have negitive space, so necessary to check that.
         if (this.currentShape.coordinates[i][j] === 1) {
           this.grid[x + i][y + j] = this.currentShape
