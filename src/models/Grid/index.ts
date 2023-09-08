@@ -153,12 +153,10 @@ export default class Grid {
     for (let i = 0; i < this.currentShape.coordinates.length; i++){
       const row = this.currentShape.coordinates[i]
       for (let j = 0; j < row.length; j++) {
-        if (this.grid[x + i][y + j] !== null) {
-          console.error('[ Grid ] renderShape() attempting to draw a shape in a non empty square.')
-          console.error('[ Grid ] renderShape() this.grid => ', JSON.stringify(this.grid, null, 4))
-          console.error(`[ Grid ] renderShape() => { i: ${i}, j: ${j} }; { x: ${x}, y: ${y}`)
-          console.error('[ Grid ] renderShape() this.currentCoordinates => ', JSON.stringify(this.currentCoordinates))
+        if (this.grid[x + i][y + j] !== null && this.currentShape.coordinates[i][j] === 1) {
+          console.error(`[ Grid ] renderShape() attempting to draw a shape in a non empty square; => { ${x + i}, ${y + j} }`)
           alert('[ Grid ] renderShape() attempting to draw a shape in a non empty square.')
+          clearInterval(this.gameLoop)
           throw new Error('[ Grid ] renderShape() attempting to draw a shape in a non empty square.')
         }
 
