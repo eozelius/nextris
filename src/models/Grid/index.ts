@@ -115,11 +115,16 @@ export default class Grid {
       shapeHeight
     })
     
-    if (!isLegalCollisionMove) {
+    // Colllision DOWN detected, reset
+    if (!isLegalCollisionMove && direction === Direction.DOWN) {
       const { x, y } = this.startingCoordinates
       this.currentCoordinates = { x, y }
       this.currentShape = generateRandomShape()
       this.renderShape(this.startingCoordinates)
+      return
+    // Collision L/R detected, do not allow move but continue
+    } else if (!isLegalCollisionMove && [Direction.LEFT, Direction.RIGHT].includes(direction)) {
+      console.log('collision L/R detected')
       return
     }
 
@@ -146,8 +151,8 @@ export default class Grid {
     }
   }
 
-  private renderShape(startingCoordinates: coorTuple) {
-    const { x, y } = startingCoordinates
+  private renderShape(coordinates: coorTuple) {
+    const { x, y } = coordinates
     this.currentCoordinates = { x, y }
 
     for (let i = 0; i < this.currentShape.coordinates.length; i++){

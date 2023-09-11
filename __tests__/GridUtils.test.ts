@@ -4,9 +4,10 @@ import Square from '@/models/Shape/Square'
 import LeftL from '@/models/Shape/LeftL'
 import LeftZ from '@/models/Shape/LeftZ'
 import RightZ from '@/models/Shape/RightZ'
+import Pyramid from '@/models/Shape/Pyramid'
 
 describe('Grid utils', () => {
-  describe('collision detection with other shapes', () => {
+  describe('function downNotCollide() collision detection Direction.DOWN', () => {
     it('[positive] returns "true" when a DOWN collision is NOT detected', () => {
       const existingSq = new Square()
       const currentShape = new Square()
@@ -90,6 +91,174 @@ describe('Grid utils', () => {
         [null, null, SSSS, SSSS], // [null, ****, S*S*, SSSS]  // 3rd col is not legal
         [null, null, SSSS, SSSS]  // [****, ****, SSSS, SSSS] 
       ]
+
+      const response = doesNotCollide({
+        currentShape,
+        direction,
+        grid: testGrid,
+        moveToCoordinates,
+        shapeHeight
+      })
+
+      expect(response).toEqual(false)
+    })
+
+    it('[positive] returns "true when a DOWN collision from a pyramid shape IS detected', () => {
+      const LLLL = new LeftL()
+      const RZRZ = new RightZ()
+      const PYPY = new Pyramid()
+
+      const currentShape = new Pyramid()
+      const direction = Direction.DOWN
+      const moveToCoordinates = { x: 3, y: 3 }
+      const shapeHeight = getShapeHeight(currentShape)
+
+      const testGrid: gridType = [
+        // Current State                              Attempting to place
+        [null, null, null, null, null, null, null],  // [null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null],  // [null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null],  // [null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null],  // [null, null, null, ^^^^, ****, null, null],
+        [null, null, PYPY, null, null, null, null],  // [null, null, PYPY, ****, ****, ****, null],
+        [LLLL, PYPY, PYPY, PYPY, RZRZ, RZRZ, null],  // [LLLL, PYPY, PYPY, PYPY, RZRZ, RZRZ, null],
+        [LLLL, LLLL, LLLL, RZRZ, RZRZ, null, null],  // [LLLL, LLLL, LLLL, RZRZ, RZRZ, null, null],
+      ]
+
+      const response = doesNotCollide({
+        currentShape,
+        direction,
+        grid: testGrid,
+        moveToCoordinates,
+        shapeHeight
+      })
+
+      expect(response).toEqual(true)
+    })
+
+    it('[negitive] returns "true when a DOWN collision from a pyramid shape IS detected', () => {
+      const LLLL = new LeftL()
+      const RZRZ = new RightZ()
+      const PYPY = new Pyramid()
+
+      const currentShape = new Pyramid()
+      const direction = Direction.DOWN
+      const moveToCoordinates = { x: 4, y: 3 }
+      const shapeHeight = getShapeHeight(currentShape)
+
+      const testGrid: gridType = [
+        // Current State                              Attempting to place
+        [null, null, null, null, null, null, null],  // [null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null],  // [null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null],  // [null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null],  // [null, null, null, null, null, null, null],
+        [null, null, PYPY, null, null, null, null],  // [null, null, PYPY, ^^^^, ****, ****, null],
+        [LLLL, PYPY, PYPY, PYPY, RZRZ, RZRZ, null],  // [LLLL, PYPY, PYPY, PY**, RZ**, RZ**, null],
+        [LLLL, LLLL, LLLL, RZRZ, RZRZ, null, null],  // [LLLL, LLLL, LLLL, RZRZ, RZRZ, null, null],
+      ]
+
+      const response = doesNotCollide({
+        currentShape,
+        direction,
+        grid: testGrid,
+        moveToCoordinates,
+        shapeHeight
+      })
+
+      expect(response).toEqual(false)
+    })
+  })
+
+  describe('function downNotCollide() collision detection Direction.LEFT', () => {
+    it('[positive] return true when a LEFT collision is NOT detected', async () => {
+      const SQSQ = new Square()
+      const currentShape = new Square()
+      const direction = Direction.LEFT
+      const testGrid: gridType = [
+        // Current State                     Attempting to place
+        [null, null, null, null, null],   // [null, null, null, null, null],
+        [null, null, null, null, null],   // [null, null, null, null, null],
+        [SQSQ, SQSQ, null, null, null],   // [SQSQ, SQSQ, ^^^^, ****, null],
+        [SQSQ, SQSQ, null, null, null],   // [SQSQ, SQSQ, ****, ****, null],
+      ]
+      const moveToCoordinates = { x: 2, y: 2 }
+      const shapeHeight = getShapeHeight(currentShape)
+
+      const response = doesNotCollide({
+        currentShape,
+        direction,
+        grid: testGrid,
+        moveToCoordinates,
+        shapeHeight
+      })
+
+      expect(response).toEqual(true)
+    })
+
+    it('[negitive] return false when a LEFT collision IS detected', async () => {
+      const SQSQ = new Square()
+      const currentShape = new Square()
+      const direction = Direction.LEFT
+      const testGrid: gridType = [
+        // Current State                     Attempting to place and move left
+        [null, null, null, null, null],   // [null, null, null, null, null],
+        [null, null, null, null, null],   // [null, null, null, null, null],
+        [SQSQ, SQSQ, null, null, null],   // [SQSQ, SQ^^, ^^^^, null, null],
+        [SQSQ, SQSQ, null, null, null],   // [SQSQ, SQ**, ****, null, null],
+      ]
+      const moveToCoordinates = { x: 2, y: 1 }
+      const shapeHeight = getShapeHeight(currentShape)
+
+      const response = doesNotCollide({
+        currentShape,
+        direction,
+        grid: testGrid,
+        moveToCoordinates,
+        shapeHeight
+      })
+
+      expect(response).toEqual(false)
+    })
+  })
+
+  describe('function downNotCollide() collision detection Direction.RIGHT', () => {
+    it('[positive] return true when a LEFT collision is NOT detected', async () => {
+      const RZRZ = new RightZ()
+      const currentShape = new Square()
+      const direction = Direction.LEFT
+      const testGrid: gridType = [
+        // Current State                     Attempting to place
+        [null, null, null, null, null],   // [null, null, null, null, null]
+        [null, null, null, null, null],   // [null, null, null, null, null]
+        [null, null, null, RZRZ, RZRZ],   // [^^^^, ****, null, RZRZ, RZRZ]
+        [null, null, RZRZ, RZRZ, null],   // [****, ****, RZRZ, RZRZ, null]
+      ]
+      const moveToCoordinates = { x: 2, y: 0 }
+      const shapeHeight = getShapeHeight(currentShape)
+
+      const response = doesNotCollide({
+        currentShape,
+        direction,
+        grid: testGrid,
+        moveToCoordinates,
+        shapeHeight
+      })
+
+      expect(response).toEqual(true)
+    })
+
+    it('[negitive] return false when a RIGHT collision IS detected', async () => {
+      const RZRZ = new RightZ()
+      const currentShape = new Square()
+      const direction = Direction.LEFT
+      const testGrid: gridType = [
+        // Current State                     Attempting to place
+        [null, null, null, null, null],   // [null, null, null, null, null]
+        [null, null, null, null, null],   // [null, null, null, null, null]
+        [null, null, null, RZRZ, RZRZ],   // [null, ^^^^, ****, RZRZ, RZRZ]
+        [null, null, RZRZ, RZRZ, null],   // [null, ****, RZ**, RZRZ, null]
+      ]
+      const moveToCoordinates = { x: 2, y: 1 }
+      const shapeHeight = getShapeHeight(currentShape)
 
       const response = doesNotCollide({
         currentShape,
