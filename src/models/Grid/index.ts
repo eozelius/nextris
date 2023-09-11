@@ -1,4 +1,4 @@
-import { isWithinBounds, doesNotCollide, getShapeLength, getShapeHeight } from './utils'
+import { isWithinBounds, doesNotCollide, getShapeLength, getShapeHeight, isALineCompleted } from './utils'
 import { ShapeType } from "@/models/Shape/types"
 import { generateRandomShape } from "@/models/Shape/utils"
 
@@ -63,11 +63,22 @@ export default class Grid {
 
     this.gameLoop = setInterval(() => {
       this.moveShape(Direction.DOWN)
+
     }, 1000)
   }
 
   pauseGame() {
     clearInterval(this.gameLoop)
+  }
+
+  private resetAndRenderNewShape() {
+    const isALineComplete = isALineCompleted(this.grid)
+    console.log('isALineCompleteResponse =>', isALineComplete)
+
+    const { x, y } = this.startingCoordinates
+    this.currentCoordinates = { x, y }
+    this.currentShape = generateRandomShape()
+    this.renderShape(this.startingCoordinates)
   }
 
   moveShape (direction: Direction) {
@@ -99,10 +110,7 @@ export default class Grid {
     if (!isMoveWithinBounds) {
       // If OB down, start a new shape at the top.  If OB left/right, just keep going.
       if (direction === Direction.DOWN) {
-        const { x, y } = this.startingCoordinates
-        this.currentCoordinates = { x, y }
-        this.currentShape = generateRandomShape()
-        this.renderShape(this.startingCoordinates)
+        this.resetAndRenderNewShape()
       }
       return
     }
@@ -117,10 +125,7 @@ export default class Grid {
     
     // Colllision DOWN detected, reset
     if (!isLegalCollisionMove && direction === Direction.DOWN) {
-      const { x, y } = this.startingCoordinates
-      this.currentCoordinates = { x, y }
-      this.currentShape = generateRandomShape()
-      this.renderShape(this.startingCoordinates)
+      this.resetAndRenderNewShape()
       return
     // Collision L/R detected, do not allow move but continue
     } else if (!isLegalCollisionMove && [Direction.LEFT, Direction.RIGHT].includes(direction)) {

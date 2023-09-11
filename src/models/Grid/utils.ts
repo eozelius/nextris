@@ -42,13 +42,11 @@ export const isWithinBounds = ({
  */
 export const doesNotCollide = ({
   currentShape,
-  direction,
   grid,
   moveToCoordinates,
   shapeHeight
 }: {
   currentShape: ShapeType,
-  direction: Direction,
   grid: gridType,
   moveToCoordinates: coorTuple,
   shapeHeight: number
@@ -95,4 +93,33 @@ export function getShapeLength (shape: ShapeType) {
  */
 export function getShapeHeight (shape: ShapeType) {
   return shape.coordinates.length
+}
+
+/**
+ * @description - iterate through entire grid and check to see if any row has been completed
+ * @returns { Object.boolean } - whether or not a row has been completed.
+ * @returns { Object.rows? } - optional property that will return the completed row number(s)
+ */
+export function isALineCompleted (grid: gridType): { completed: boolean, rows?: Array<number> } {
+  const completedRows = []
+
+  for (let i = 0; i < grid.length; i++) {
+    for(let j = 0; j < grid[i].length; j++) {
+      if (grid[i][j] === null) {
+        //row i is incomplete, check the next line
+        break
+      }
+
+      // if we are checking the last cell in this row, and it is not null, then we know that 
+      // all cells in this row are filled, therefore this row is complete
+      if (j === grid[i].length - 1) {
+        completedRows.push(i)
+      }
+    }
+  }
+
+  return {
+    completed: Boolean(completedRows.length),
+    ...(Boolean(completedRows.length) ? { rows: completedRows } : {})
+  }
 }

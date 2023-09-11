@@ -1,5 +1,5 @@
 import { Direction, gridType } from '@/models/Grid'
-import { doesNotCollide, getShapeHeight } from '@/models/Grid/utils'
+import { doesNotCollide, getShapeHeight, isALineCompleted } from '@/models/Grid/utils'
 import Square from '@/models/Shape/Square'
 import LeftL from '@/models/Shape/LeftL'
 import LeftZ from '@/models/Shape/LeftZ'
@@ -11,7 +11,6 @@ describe('Grid utils', () => {
     it('[positive] returns "true" when a DOWN collision is NOT detected', () => {
       const existingSq = new Square()
       const currentShape = new Square()
-      const direction = Direction.DOWN
       const testGrid: gridType = [
         [null, null],
         [null, null],
@@ -23,7 +22,6 @@ describe('Grid utils', () => {
 
       const response = doesNotCollide({
         currentShape,
-        direction,
         grid: testGrid,
         moveToCoordinates,
         shapeHeight
@@ -35,7 +33,6 @@ describe('Grid utils', () => {
     it('[negitive] returns "false" when a DOWN collision IS detected', () => {
       const existingSq = new Square()
       const currentShape = new Square()
-      const direction = Direction.DOWN
       const testGrid: gridType = [
         [null, null],
         [existingSq, existingSq],
@@ -46,7 +43,6 @@ describe('Grid utils', () => {
 
       const response = doesNotCollide({
         currentShape,
-        direction,
         grid: testGrid,
         moveToCoordinates,
         shapeHeight
@@ -58,7 +54,6 @@ describe('Grid utils', () => {
     it('[positive] returns "true" when a DOWN collision is NOT detected', () => {
       const LLLL = new LeftL()
       const currentShape = new LeftZ()
-      const direction = Direction.DOWN
       const testGrid: gridType = [
         // Current State         Attempting to place - valid
         [null, null, null],   // [****, ****, null]
@@ -70,7 +65,6 @@ describe('Grid utils', () => {
 
       const response = doesNotCollide({
         currentShape,
-        direction,
         grid: testGrid,
         moveToCoordinates,
         shapeHeight
@@ -82,7 +76,6 @@ describe('Grid utils', () => {
     it('[negitive] returns "false" when a DOWN collision from the TOP row IS detected.', () => {
       const SSSS = new Square() // existing square
       const currentShape = new RightZ()
-      const direction = Direction.DOWN
       const moveToCoordinates = { x: 1, y: 0 }
       const shapeHeight = getShapeHeight(currentShape)
       const testGrid: gridType = [
@@ -94,7 +87,6 @@ describe('Grid utils', () => {
 
       const response = doesNotCollide({
         currentShape,
-        direction,
         grid: testGrid,
         moveToCoordinates,
         shapeHeight
@@ -126,7 +118,6 @@ describe('Grid utils', () => {
 
       const response = doesNotCollide({
         currentShape,
-        direction,
         grid: testGrid,
         moveToCoordinates,
         shapeHeight
@@ -158,7 +149,6 @@ describe('Grid utils', () => {
 
       const response = doesNotCollide({
         currentShape,
-        direction,
         grid: testGrid,
         moveToCoordinates,
         shapeHeight
@@ -185,7 +175,6 @@ describe('Grid utils', () => {
 
       const response = doesNotCollide({
         currentShape,
-        direction,
         grid: testGrid,
         moveToCoordinates,
         shapeHeight
@@ -210,7 +199,6 @@ describe('Grid utils', () => {
 
       const response = doesNotCollide({
         currentShape,
-        direction,
         grid: testGrid,
         moveToCoordinates,
         shapeHeight
@@ -237,7 +225,6 @@ describe('Grid utils', () => {
 
       const response = doesNotCollide({
         currentShape,
-        direction,
         grid: testGrid,
         moveToCoordinates,
         shapeHeight
@@ -262,7 +249,6 @@ describe('Grid utils', () => {
 
       const response = doesNotCollide({
         currentShape,
-        direction,
         grid: testGrid,
         moveToCoordinates,
         shapeHeight
@@ -271,5 +257,59 @@ describe('Grid utils', () => {
       expect(response).toEqual(false)
     })
   })
+
+  describe('function isALineCompleted()', () => {
+    it('[positive] returns true when a row is complete', () => {
+      const SQSQ = new Square()
+      const PYPY = new Pyramid()
+
+      const grid: gridType = [
+        [null, null, null, null, null],
+        [null, null, null, null, null],
+        [SQSQ, SQSQ, null, PYPY, null],
+        [SQSQ, SQSQ, PYPY, PYPY, PYPY], // completed row
+      ]
+
+      const response = isALineCompleted(grid)
+
+      expect(response.completed).toEqual(true)
+      expect(response.rows).toEqual([3])
+    })
+
+    it('[negitive] returns false when a row has NOT been completed', () => {
+      const SQSQ = new Square()
+      const PYPY = new Pyramid()
+
+      const grid: gridType = [
+        [null, null, null, null, null, null],
+        [null, null, null, null, null, null],
+        [SQSQ, SQSQ, null, null, PYPY, null],
+        [SQSQ, SQSQ, null, PYPY, PYPY, PYPY],
+      ]
+
+      const response = isALineCompleted(grid)
+
+      expect(response.completed).toEqual(false)
+      expect(response.rows).not.toBeDefined()
+    })
+
+    it('[positive] returns true when MULTIPE rows have been completed', () => {
+      const SQSQ = new Square()
+      const PYPY = new Pyramid()
+      const LLLL = new LeftL()
+      const LZLZ = new LeftZ()
+
+      const grid: gridType = [
+        [LLLL, null, LZLZ, LZLZ, null],
+        [LLLL, LLLL, LLLL, LZLZ, LZLZ], // completed row
+        [SQSQ, SQSQ, null, PYPY, null],
+        [SQSQ, SQSQ, PYPY, PYPY, PYPY], // completed row
+      ]
+
+      const response = isALineCompleted(grid)
+
+      expect(response.completed).toEqual(true)
+      expect(response.rows).toEqual([1, 3])
+    })
+  })
 })
-  
