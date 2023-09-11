@@ -20,17 +20,16 @@ type randomShapeMapType = {
 
 export const generateRandomShape = (): ShapeType => {
   const numberToShapeMap: randomShapeMapType = {
-    // 0: Line,
-    // 1: LeftL,
-    // 2: RightL,
-    // 3: LeftZ,
-    // 4: RightZ,
-    // 5: Pyramid,
-    // 6: Square
-    0: Square
+    0: Line,
+    1: LeftL,
+    2: RightL,
+    3: LeftZ,
+    4: RightZ,
+    5: Pyramid,
+    6: Square
   }
 
-  const n = Math.floor(Math.random() * 1)
+  const n = Math.floor(Math.random() * 7)
   const randomShape = numberToShapeMap[n]
   const instantiatedRandomShape = new randomShape()
   return instantiatedRandomShape

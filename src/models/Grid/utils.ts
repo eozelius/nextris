@@ -54,6 +54,8 @@ export const doesNotCollide = ({
   shapeHeight: number
 }): boolean => {
 
+  // const shapeLength = getShapeLength(currentShape)
+
   // console.log('currentShape => ', currentShape)
   // console.log('direction => ', direction)
   // console.log('grid => ', grid)
@@ -61,29 +63,48 @@ export const doesNotCollide = ({
 
   // Collision DOWN
   if (direction === Direction.DOWN) {
-    const lastRow = currentShape.coordinates[currentShape.coordinates.length - 1]
+    // const lastRow = currentShape.coordinates[currentShape.coordinates.length - 1]
     const {x, y} = moveToCoordinates
 
-    // console.log('    <<<< COLLISION DETCTECTION >>>> => ')
+    console.log('    <<<< COLLISION DETCTECTION >>>> => ')
+    // initialize i at 1, because we need  to check the row directly below, i.e. x + 1
+    for (let i = 0; i < shapeHeight; i++) {
 
-    for (let j = 0; j < lastRow.length; j++) {
-      if (lastRow[j] === 1) {
+      console.log('i => ', i)
+      // console.log('currentShape.coordinates[i] => ', currentShape.coordinates[i])
+      
+      for (let j = 0; j < currentShape.coordinates[i].length; j++) {
+        if (currentShape.coordinates[i][j] === 1) {
+          console.log(`[ doesNotCollide ] => { x: ${x}, y: ${y} }, { i: ${i}, j: ${j} }; = { (x + i): ${x + i}, (y + j): ${y + j} }`)
 
-        // console.log(`[doesNotCollide()] j: ${j}; lastRow[${j}]: ${lastRow[j]}`)
+          const cellToCheck = grid[x + i][y + j]
 
-        // might want to double check that y is within grid bounds.  Technically, this function is
-        // dependent on isWithinBounds() passing before running this function.  Not ideal.
-        // console.log(`moveToCoor: { x: ${x}, y: ${y} }`)
 
-        const xPlusShapeHeight = x + shapeHeight - 1
-        const cellToCheck = grid[xPlusShapeHeight][y + j]
-        // console.log(`[doesNotCollide()] moveToCoordinates { x: ${x}, y: ${y} };  checking: { x: ${xPlusShapeHeight}, y: ${y + j} }`)
-        // console.log('[doesNotCollide()] cellToCheck => ', cellToCheck)
+          // if it is the last row, then do x + shapeHeight + 1.
+          // if it is not the last row, then do + 1
 
-        if (cellToCheck !== null && cellToCheck?.id !== currentShape.id) {
-          // console.log('[doesNotCollide()] COLLISION detected!!!!!!')
-          // alert(1)
-          return false
+          console.log(`[ doesNotCollide ] cellToCheck => ${cellToCheck}`)
+
+
+
+          // console.log(`[doesNotCollide()] j: ${j}; lastRow[${j}]: ${lastRow[j]}`)
+
+          // might want to double check that y is within grid bounds.  Technically, this function is
+          // dependent on isWithinBounds() passing before running this function.  Not ideal.
+          // console.log(`moveToCoor: { x: ${x}, y: ${y} }`)
+
+          // const xPlusShapeHeight = x + shapeHeight - 1
+          // const cellToCheck = grid[xPlusShapeHeight][y + j]
+          // console.log(`[doesNotCollide()] moveToCoordinates { x: ${x}, y: ${y} };  checking: { x: ${xPlusShapeHeight}, y: ${y + j} }`)
+          // console.log('[doesNotCollide()] cellToCheck => ', cellToCheck)
+
+          if (cellToCheck !== null && cellToCheck?.id !== currentShape.id) {
+            // console.log('[doesNotCollide()] COLLISION detected!!!!!!')
+            // alert(1)
+            return false
+          }
+        } else {
+          console.log(`{ i: ${i}, j: ${j} } is negitive space`)
         }
       }
     }
