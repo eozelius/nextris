@@ -1,4 +1,4 @@
-import { isWithinBounds, doesNotCollide, getShapeLength, getShapeHeight, isALineCompleted } from './utils'
+import { isWithinBounds, doesNotCollide, getShapeLength, getShapeHeight, isALineCompleted, slideRowsDown } from './utils'
 import { ShapeType } from "@/models/Shape/types"
 import { generateRandomShape } from "@/models/Shape/utils"
 
@@ -31,6 +31,12 @@ export default class Grid {
      * 3. place the shape at this.startingCoordinate
     */
     this.grid = [
+      // [null, null, null, null],
+      // [null, null, null, null],
+      // [null, null, null, null],
+      // [null, null, null, null],
+      // [null, null, null, null],
+
       [null, null, null, null, null, null, null, null, null, null],
       [null, null, null, null, null, null, null, null, null, null],
       [null, null, null, null, null, null, null, null, null, null],
@@ -38,6 +44,7 @@ export default class Grid {
       [null, null, null, null, null, null, null, null, null, null],
       [null, null, null, null, null, null, null, null, null, null],
       [null, null, null, null, null, null, null, null, null, null],
+
       // [null, null, null, null, null, null, null, null, null, null],
       // [null, null, null, null, null, null, null, null, null, null],
       // [null, null, null, null, null, null, null, null, null, null],
@@ -71,9 +78,24 @@ export default class Grid {
     clearInterval(this.gameLoop)
   }
 
+  private clearRow (rowNumber: number): void {
+    for (let i = 0; i < this.grid[rowNumber].length; i++) {
+      this.grid[rowNumber][i] = null;
+    }
+  }
+
   private resetAndRenderNewShape() {
-    const isALineComplete = isALineCompleted(this.grid)
-    console.log('isALineCompleteResponse =>', isALineComplete)
+    const isALineCompletedResponse = isALineCompleted(this.grid)
+
+    if (isALineCompletedResponse.completed) {
+      // clear each row.
+      for (const rowNum of isALineCompletedResponse.rows) {
+        this.clearRow(rowNum)
+      }
+
+      const newGrid = slideRowsDown(this.grid, isALineCompletedResponse.rows)
+      this.grid = newGrid
+    }
 
     const { x, y } = this.startingCoordinates
     this.currentCoordinates = { x, y }

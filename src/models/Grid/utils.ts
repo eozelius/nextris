@@ -53,11 +53,11 @@ export const doesNotCollide = ({
 }): boolean => {
   const {x, y} = moveToCoordinates
 
-  console.log('    <<<< COLLISION DETCTECTION >>>> ')
+  // console.log('    <<<< COLLISION DETCTECTION >>>> ')
   for (let i = 0; i < shapeHeight; i++) {
     for (let j = 0; j < currentShape.coordinates[i].length; j++) {
       if (currentShape.coordinates[i][j] === 1) {
-        console.log(`[ doesNotCollide ] => { x: ${x}, y: ${y} }, { i: ${i}, j: ${j} }; = { (x + i): ${x + i}, (y + j): ${y + j} }`)
+        // console.log(`[ doesNotCollide ] => { x: ${x}, y: ${y} }, { i: ${i}, j: ${j} }; = { (x + i): ${x + i}, (y + j): ${y + j} }`)
 
         // might want to double check that y is within grid bounds.  Technically, this function is
         // dependent on isWithinBounds() passing before running this function.  Not ideal.
@@ -70,7 +70,7 @@ export const doesNotCollide = ({
           return false
         }
       } else {
-        console.log(`{ i: ${i}, j: ${j} } is negitive space`)
+        // console.log(`{ i: ${i}, j: ${j} } is negitive space`)
       }
     }
   }
@@ -98,9 +98,9 @@ export function getShapeHeight (shape: ShapeType) {
 /**
  * @description - iterate through entire grid and check to see if any row has been completed
  * @returns { Object.boolean } - whether or not a row has been completed.
- * @returns { Object.rows? } - optional property that will return the completed row number(s)
+ * @returns { Object.rows } - list of completed rows, could be empty
  */
-export function isALineCompleted (grid: gridType): { completed: boolean, rows?: Array<number> } {
+export function isALineCompleted (grid: gridType): { completed: boolean, rows: Array<number> } {
   const completedRows = []
 
   for (let i = 0; i < grid.length; i++) {
@@ -120,6 +120,32 @@ export function isALineCompleted (grid: gridType): { completed: boolean, rows?: 
 
   return {
     completed: Boolean(completedRows.length),
-    ...(Boolean(completedRows.length) ? { rows: completedRows } : {})
+    rows: completedRows
   }
+}
+
+/**
+ * @description - slide down any rows that are above an empty row.
+ * @param { gridType } grid
+ * @param { Array<Int> } emptyRows - rows that have already been determined to be empty.
+ * @returns { gridType } - cloned new grid, with rows shifted down.
+ */
+export function slideRowsDown(grid: gridType, emptyRows: Array<number>): gridType {
+  const clone = JSON.parse(JSON.stringify(grid))
+
+  for (const emptyRow of emptyRows) {
+    // remove empty row from grid
+    clone.splice(emptyRow, 1)
+
+    // create new empty row
+    const newEmptyRow = []
+    for (let i = 0; i < grid[0].length; i++) {
+      newEmptyRow.push(null)
+    }
+
+    // add the new empty row to top of grid
+    clone.unshift(newEmptyRow)
+  }
+
+  return JSON.parse(JSON.stringify(clone))
 }

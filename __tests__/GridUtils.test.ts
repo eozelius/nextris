@@ -1,10 +1,11 @@
 import { Direction, gridType } from '@/models/Grid'
-import { doesNotCollide, getShapeHeight, isALineCompleted } from '@/models/Grid/utils'
+import { doesNotCollide, getShapeHeight, isALineCompleted, slideRowsDown, translateRow } from '@/models/Grid/utils'
 import Square from '@/models/Shape/Square'
 import LeftL from '@/models/Shape/LeftL'
 import LeftZ from '@/models/Shape/LeftZ'
 import RightZ from '@/models/Shape/RightZ'
 import Pyramid from '@/models/Shape/Pyramid'
+import Line from '@/models/Shape/Line'
 
 describe('Grid utils', () => {
   describe('function downNotCollide() collision detection Direction.DOWN', () => {
@@ -101,7 +102,6 @@ describe('Grid utils', () => {
       const PYPY = new Pyramid()
 
       const currentShape = new Pyramid()
-      const direction = Direction.DOWN
       const moveToCoordinates = { x: 3, y: 3 }
       const shapeHeight = getShapeHeight(currentShape)
 
@@ -132,7 +132,6 @@ describe('Grid utils', () => {
       const PYPY = new Pyramid()
 
       const currentShape = new Pyramid()
-      const direction = Direction.DOWN
       const moveToCoordinates = { x: 4, y: 3 }
       const shapeHeight = getShapeHeight(currentShape)
 
@@ -162,7 +161,6 @@ describe('Grid utils', () => {
     it('[positive] return true when a LEFT collision is NOT detected', async () => {
       const SQSQ = new Square()
       const currentShape = new Square()
-      const direction = Direction.LEFT
       const testGrid: gridType = [
         // Current State                     Attempting to place
         [null, null, null, null, null],   // [null, null, null, null, null],
@@ -212,7 +210,6 @@ describe('Grid utils', () => {
     it('[positive] return true when a LEFT collision is NOT detected', async () => {
       const RZRZ = new RightZ()
       const currentShape = new Square()
-      const direction = Direction.LEFT
       const testGrid: gridType = [
         // Current State                     Attempting to place
         [null, null, null, null, null],   // [null, null, null, null, null]
@@ -290,7 +287,7 @@ describe('Grid utils', () => {
       const response = isALineCompleted(grid)
 
       expect(response.completed).toEqual(false)
-      expect(response.rows).not.toBeDefined()
+      expect(response.rows).toEqual([])
     })
 
     it('[positive] returns true when MULTIPE rows have been completed', () => {
@@ -310,6 +307,105 @@ describe('Grid utils', () => {
 
       expect(response.completed).toEqual(true)
       expect(response.rows).toEqual([1, 3])
+    })
+  })
+
+  describe('function slideRowsDown()', () => {
+    it('[positivie] slides a row down, when a row below it is empty', () => {
+      const SQSQ = new Square()
+      const PYPY = new Pyramid()
+
+      const sqId = SQSQ.id
+      const pyId = PYPY.id
+
+      const grid: gridType = [
+        [null, null, null, null, null],
+        [null, null, null, null, null],
+        [SQSQ, SQSQ, null, PYPY, null],
+        [SQSQ, SQSQ, PYPY, PYPY, PYPY],
+        [null, null, null, null, null], // empty row
+      ]
+
+      const response = slideRowsDown(grid, [0, 1, 4])
+      // 3rd row should now be empty
+      expect(response[2][0]).toEqual(null)
+      expect(response[2][1]).toEqual(null)
+      expect(response[2][2]).toEqual(null)
+      expect(response[2][3]).toEqual(null)
+      expect(response[2][4]).toEqual(null)
+
+      // 3rd row should slide down to 4th
+      expect(response[4][0]?.id).toEqual(sqId)
+      expect(response[4][1]?.id).toEqual(sqId)
+      expect(response[4][2]?.id).toEqual(pyId)
+      expect(response[4][3]?.id).toEqual(pyId)
+      expect(response[4][4]?.id).toEqual(pyId)
+    })
+
+    it('[positivie] slides a row down, when a row below it is empty', () => {
+      const SQSQ = new Square()
+
+      const grid: gridType = [
+        [null, null,], // empty row
+        [SQSQ, SQSQ,],
+        [SQSQ, SQSQ,],
+        [null, null,], // empty row
+      ]
+
+      const response = slideRowsDown(grid, [0, 3])
+      expect(response[0]).toEqual([null, null])
+
+      expect(response).toEqual([
+        [null, null,],
+        [null, null,],
+        [SQSQ, SQSQ,],
+        [SQSQ, SQSQ,],
+      ])
+    })
+
+    it('[positive] slides a row down, when there are multiple empty rows', () => {
+      const SQSQ = new Square()
+      const PYPY = new Pyramid()
+      const IIII = new Line()
+
+      const sqId = SQSQ.id
+      const pyId = PYPY.id
+      const Iid = IIII.id
+
+      const grid: gridType = [
+        [null, null, null, null, null, IIII],
+        [null, null, null, null, null, IIII],
+        [SQSQ, SQSQ, null, PYPY, null, IIII],
+        [SQSQ, SQSQ, PYPY, PYPY, PYPY, IIII],
+        [null, null, null, null, null, null], // empty row
+        [null, null, null, null, null, null], // empty row
+      ]
+
+      const response = slideRowsDown(grid, [4,5])
+
+      expect(response[5][0]?.id).toEqual(sqId)
+      expect(response[5][1]?.id).toEqual(sqId)
+      expect(response[4][0]?.id).toEqual(sqId)
+      expect(response[4][1]?.id).toEqual(sqId)
+
+      expect(response[5][2]?.id).toEqual(pyId)
+      expect(response[5][3]?.id).toEqual(pyId)
+      expect(response[5][4]?.id).toEqual(pyId)
+      expect(response[4][3]?.id).toEqual(pyId)
+
+      expect(response[2][5]?.id).toEqual(Iid)
+      expect(response[3][5]?.id).toEqual(Iid)
+      expect(response[4][5]?.id).toEqual(Iid)
+      expect(response[5][5]?.id).toEqual(Iid)
+
+      expect(response).toEqual([
+        [null, null, null, null, null, null], // empty row
+        [null, null, null, null, null, null], // empty row
+        [null, null, null, null, null, IIII],
+        [null, null, null, null, null, IIII],
+        [SQSQ, SQSQ, null, PYPY, null, IIII],
+        [SQSQ, SQSQ, PYPY, PYPY, PYPY, IIII],
+      ])
     })
   })
 })
