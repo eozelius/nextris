@@ -1,5 +1,5 @@
 import { Direction, gridType } from '@/models/Grid'
-import { doesNotCollide, getShapeHeight, isALineCompleted, slideRowsDown, translateRow } from '@/models/Grid/utils'
+import { doesNotCollide, getShapeHeight, isALineCompleted, slideRowsDown } from '@/models/Grid/utils'
 import Square from '@/models/Shape/Square'
 import LeftL from '@/models/Shape/LeftL'
 import LeftZ from '@/models/Shape/LeftZ'

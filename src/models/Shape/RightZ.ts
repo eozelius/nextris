@@ -6,7 +6,7 @@ class RightZShape extends Shape {
   color: Color = Color.YELLOW
   static coordinates: shapeCoorType = [
     [0, 1, 1],
-    [1, 1]
+    [1, 1, 0]
   ]
 
   constructor () {

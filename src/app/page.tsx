@@ -2,7 +2,6 @@ import Image from 'next/image'
 
 import styles from './page.module.css'
 import logo from '@/images/logo.png'
-import Score from '@/components/Score'
 import GridController from '@/components/Grid/GridController'
 import Footer from '@/components/Footer'
 
@@ -18,8 +17,6 @@ export default function Home() {
           height={80}
         />
       </div>
-
-      <Score />
 
       <GridController />
 

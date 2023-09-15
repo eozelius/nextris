@@ -5,7 +5,7 @@ class LeftZShape extends Shape {
   type: ShapesEnum = ShapesEnum.LeftZ
   color: Color = Color.RED
   static coordinates: shapeCoorType = [
-    [1, 1],
+    [1, 1, 0],
     [0, 1, 1]
   ]
 

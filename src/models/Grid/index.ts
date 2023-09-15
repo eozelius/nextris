@@ -1,6 +1,6 @@
 import { isWithinBounds, doesNotCollide, getShapeLength, getShapeHeight, isALineCompleted, slideRowsDown } from './utils'
 import { ShapeType } from "@/models/Shape/types"
-import { generateRandomShape } from "@/models/Shape/utils"
+import { generateRandomShape, rotate90Degrees } from "@/models/Shape/utils"
 
 export type coorTuple = {
   x: number,
@@ -16,6 +16,7 @@ export enum Direction {
 export type gridType = Array<Array<ShapeType | null>>
 
 export default class Grid {
+  private score: number
   private grid: gridType
   private currentShape: ShapeType
   private startingCoordinates: coorTuple = { x: 0, y: 4 }
@@ -44,6 +45,10 @@ export default class Grid {
       [null, null, null, null, null, null, null, null, null, null],
       [null, null, null, null, null, null, null, null, null, null],
       [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
 
       // [null, null, null, null, null, null, null, null, null, null],
       // [null, null, null, null, null, null, null, null, null, null],
@@ -60,6 +65,7 @@ export default class Grid {
       // [null, null, null, null, null, null, null, null, null, null]
     ]
     this.currentShape = generateRandomShape()
+    this.score = 0
   }
 
   startGame(){
@@ -88,6 +94,8 @@ export default class Grid {
     const isALineCompletedResponse = isALineCompleted(this.grid)
 
     if (isALineCompletedResponse.completed) {
+      this.score += isALineCompletedResponse.rows.length
+
       // clear each row.
       for (const rowNum of isALineCompletedResponse.rows) {
         this.clearRow(rowNum)
@@ -139,7 +147,6 @@ export default class Grid {
     
     const isLegalCollisionMove = doesNotCollide({
       currentShape: this.currentShape,
-      direction,
       grid: JSON.parse(JSON.stringify(this.renderGrid())), // Clone grid, just to be safe.
       moveToCoordinates: newCoors,
       shapeHeight
@@ -173,7 +180,9 @@ export default class Grid {
     for (let i = 0; i < shapeToClear.coordinates.length; i++){
       const row = shapeToClear.coordinates[i]
       for (let j = 0; j < row.length; j++) {
-        this.grid[x + i][y + j] = null
+        if (shapeToClear.coordinates[i][j] === 1) {
+          this.grid[x + i][y + j] = null
+        }        
       }
     }
   }
@@ -187,7 +196,7 @@ export default class Grid {
       for (let j = 0; j < row.length; j++) {
         if (this.grid[x + i][y + j] !== null && this.currentShape.coordinates[i][j] === 1) {
           console.error(`[ Grid ] renderShape() attempting to draw a shape in a non empty square; => { ${x + i}, ${y + j} }`)
-          alert('[ Grid ] renderShape() attempting to draw a shape in a non empty square.')
+          alert('Game Over!')
           clearInterval(this.gameLoop)
           throw new Error('[ Grid ] renderShape() attempting to draw a shape in a non empty square.')
         }
@@ -198,5 +207,15 @@ export default class Grid {
         }
       }
     }
+  }
+
+  getScore(){
+    return this.score
+  }
+
+  rotateCurrentShape () {
+    const rotatedCoordinates = rotate90Degrees(this.currentShape)
+    this.clearShape()
+    this.currentShape.setCoordinates(rotatedCoordinates)
   }
 }

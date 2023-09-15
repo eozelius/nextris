@@ -1,15 +1,18 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
+import Score from '@/components/Score'
 import Grid, { Direction, gridType } from '@/models/Grid'
 import { ShapeType } from '@/models/Shape/types'
 import PresentationalGrid from './PresentationalGrid'
 import styles from './Grid.module.css'
 
 export default function GridController () {
+  const presentationalGridRef = useRef(null);
   const [ gridInstance, setGridInstance ] = useState<Grid | null>(null)
   const [ gridArray, setGridArray ] = useState<gridType | null>(null)
+  const [ score, setScore ] = useState<number>(0)
 
   // leverage useEffect(..., []) to only invoke new Grid() once.
   useEffect(() => {
@@ -25,6 +28,8 @@ export default function GridController () {
     const interval = setInterval(() => {
       const newGrid = g?.renderGrid() || []
       setGridArray(JSON.parse(JSON.stringify(newGrid)))
+      const newScore = g?.getScore()
+      setScore(newScore)
     }, 200)
 
     return () => clearInterval(interval)
@@ -35,6 +40,8 @@ export default function GridController () {
       gridInstance?.moveShape(Direction.LEFT)
     } else if (['ArrowRight', 'KeyD'].includes(e.code)) {
       gridInstance?.moveShape(Direction.RIGHT)
+    } else if (e.code === 'ArrowUp') {
+      gridInstance?.rotateCurrentShape()
     }
 
     const updatedGrid: Array<Array<ShapeType | null>> = gridInstance?.renderGrid() || []
@@ -44,6 +51,8 @@ export default function GridController () {
 
   const handleStartGame = (e: React.MouseEvent) => {
     e.preventDefault()
+    // @ts-ignore
+    presentationalGridRef?.current?.focus()
     gridInstance?.startGame()
   } 
 
@@ -55,6 +64,8 @@ export default function GridController () {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <Score score={score} />
+        
         <button
           onClick={handleStartGame}
           className={styles['start-game-btn']}
@@ -71,7 +82,11 @@ export default function GridController () {
       </div>
       
       {gridArray && gridArray.length
-        ? <PresentationalGrid grid={gridArray} handleKeyDown={handleKeyDown} />
+        ? <PresentationalGrid
+            grid={gridArray}
+            handleKeyDown={handleKeyDown}
+            focusReference={presentationalGridRef}
+          />
         : <p>loading</p>}
     </div>
   )

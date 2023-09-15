@@ -5,7 +5,7 @@ class Pyramid extends Shape {
   type: ShapesEnum = ShapesEnum.Pyramid
   color: Color = Color.PINK
   static coordinates: shapeCoorType = [
-    [0, 1],
+    [0, 1, 0],
     [1, 1, 1]
   ]
 

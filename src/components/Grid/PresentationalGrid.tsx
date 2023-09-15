@@ -55,15 +55,15 @@ const colorToRender = (color: Color) => {
 
 type GridPresentationalProps = {
   grid: gridType,
-  handleKeyDown: (e: React.KeyboardEvent<HTMLDivElement>) => void
+  handleKeyDown: (e: React.KeyboardEvent<HTMLDivElement>) => void,
+  focusReference: any
 }
 
 export default function GridPresentational ({
   grid,
-  handleKeyDown
+  handleKeyDown,
+  focusReference
 }: GridPresentationalProps) {
-  // console.log('<PresnetationalGrid /> grid => ', JSON.stringify(grid, null, 4))
-  
   const renderCell = (cell: ShapeType | null) => {
     if (cell === null) {
       return <div className={styles.cell}></div>
@@ -84,7 +84,7 @@ export default function GridPresentational ({
   }
 
   return (
-    <div className={styles['grid-container']} tabIndex={0} onKeyDown={handleKeyDown}>
+    <div ref={focusReference} className={styles['grid-container']} tabIndex={0} onKeyDown={handleKeyDown}>
       {grid.map((row, i) => (
         <ol key={i}>
           {row.map((col, j) => {
